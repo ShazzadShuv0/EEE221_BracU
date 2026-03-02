@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EEE221 - Energy Conversion I | Resource portal</title>
+  <!-- Google Fonts: clean academic sans & serif -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=Source+Serif+4:opsz@8..60&display=swap" rel="stylesheet">
+  <!-- Font awesome icons (free CDN) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* ---------- RESET & VARIABLES ---------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0b0e14;
+      color: #eef2f6;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    :root {
+      --bg-primary: #0b0e14;
+      --bg-secondary: #141a24;
+      --surface: #1e2635;
+      --surface-light: #2c3547;
+      --accent: #00e0ff;
+      --accent-glow: rgba(0, 224, 255, 0.4);
+      --text-primary: #f0f4fa;
+      --text-secondary: #b0c0d0;
+      --card-bg: rgba(30, 38, 53, 0.8);
+      --border-glow: 0 0 10px var(--accent-glow);
+      --shadow-card: 0 15px 30px -10px rgba(0,0,0,0.6), 0 0 0 1px rgba(0,224,255,0.1);
+      --transition: all 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+    }
+
+    /* ---------- TYPOGRAPHY & SECTIONS ---------- */
+    h1, h2, h3 {
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    h2 {
+      font-size: 2.2rem;
+      margin-bottom: 2rem;
+      border-left: 5px solid var(--accent);
+      padding-left: 1.5rem;
+    }
+
+    .section {
+      padding: 5rem 1.5rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* ---------- PRELOADER ---------- */
+    #preloader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg-primary);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.6s;
+    }
+
+    .loader {
+      width: 50px;
+      height: 50px;
+      border: 3px solid var(--surface-light);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s infinite linear;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ---------- NAVBAR (SHRINK ON SCROLL) ---------- */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+      transition: all 0.3s;
+      backdrop-filter: blur(8px);
+      background: rgba(11, 14, 20, 0.6);
+      border-bottom: 1px solid rgba(0, 224, 255, 0.1);
+    }
+
+    nav.shrink {
+      padding: 0.7rem 2rem;
+      background: rgba(11, 14, 20, 0.95);
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .logo {
+      font-weight: 700;
+      font-size: 1.4rem;
+      color: var(--accent);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .nav-links a {
+      color: var(--text-primary);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: var(--transition);
+      border-bottom: 1px solid transparent;
+      padding-bottom: 0.2rem;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    /* ---------- PROGRESS BAR ---------- */
+    #progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: var(--accent);
+      width: 0%;
+      z-index: 1001;
+      transition: width 0.05s;
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    /* ---------- HERO (LOGIN REMOVED) ---------- */
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background: radial-gradient(circle at 30% 40%, #1a2a44 0%, transparent 40%),
+                  radial-gradient(circle at 80% 70%, #0f3448 0%, transparent 45%),
+                  linear-gradient(145deg, #0b0e14 0%, #101b26 100%);
+      animation: meshMove 18s infinite alternate ease-in-out;
+    }
+
+    @keyframes meshMove {
+      0% { background-position: 0% 0%; }
+      100% { background-position: 5% 8%; }
+    }
+
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      padding: 0 2rem;
+      overflow: hidden;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 3;
+      max-width: 800px;
+      animation: fadeUp 1.2s ease;
+    }
+
+    @keyframes fadeUp {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero h1 {
+      font-size: clamp(2.8rem, 8vw, 5rem);
+      line-height: 1.1;
+    }
+
+    .hero .sub {
+      font-size: 1.6rem;
+      color: var(--accent);
+      margin: 1rem 0 0.5rem;
+      font-weight: 300;
+      letter-spacing: 1px;
+    }
+
+    .hero .intro-text {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 1.5rem 0 2rem;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 0.9rem 2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition);
+      cursor: pointer;
+      border: none;
+      font-size: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #0b0e14;
+      border: none;
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    .btn-primary:hover {
+      background: #fff;
+      transform: scale(1.02);
+    }
+
+    .btn-outline:hover {
+      background: rgba(0, 224, 255, 0.1);
+    }
+
+    /* ---------- ABOUT ME (FULLY UPDATED) ---------- */
+    .about-grid {
+      display: flex;
+      gap: 3rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .profile-img {
+      width: 220px;
+      height: 220px;
+      border-radius: 40% 60% 40% 60% / 60% 40% 60% 40%;
+      border: 3px solid var(--accent);
+      box-shadow: var(--border-glow);
+      overflow: hidden;  /* important for image crop */
+      background: #1e2a3a;
+      flex-shrink: 0;
+    }
+
+    .profile-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .about-text {
+      flex: 1;
+      min-width: 280px;
+    }
+
+    .about-text h3 {
+      font-size: clamp(1.4rem, 3.5vw, 2rem);
+      line-height: 1.3;
+      margin-bottom: 0.8rem;
+      word-break: break-word;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0.5rem;
+    }
+
+    .about-text h3 span {
+      color: var(--accent);
+      font-size: clamp(1rem, 2.5vw, 1.3rem);
+      white-space: nowrap;
+    }
+
+    .about-text p {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      margin: 0.8rem 0;
+    }
+
+    .about-text .specialization {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .about-text .specialization i {
+      color: var(--accent);
+      font-size: 1.3rem;
+    }
+
+    /* Mobile adjustments for about */
+    @media (max-width: 600px) {
+      .about-text h3 {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.3rem;
+      }
+      .about-text h3 span {
+        white-space: normal;
+      }
+    }
+
+    /* ---------- MACHINE MODULES (ACCORDION) ---------- */
+    .machines-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 2rem;
+    }
+
+    .machine-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(4px);
+      border-radius: 28px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow-card);
+      border: 1px solid rgba(255, 255, 255, 0.02);
+      transition: var(--transition);
+      cursor: pointer;
+    }
+
+    .machine-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-6px);
+    }
+
+    .machine-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .machine-header h3 {
+      font-size: 1.6rem;
+    }
+
+    .machine-header i {
+      color: var(--accent);
+      font-size: 2rem;
+    }
+
+    .machine-expand {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease-out, margin 0.3s;
+      background: var(--surface);
+      border-radius: 20px;
+      margin-top: 0;
+    }
+
+    .machine-card.active .machine-expand {
+      max-height: 300px;
+      margin-top: 1.5rem;
+      transition: max-height 0.6s ease-in;
+    }
+
+    .expand-content {
+      padding: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .resource-link {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 0.3rem 0;
+      border-bottom: 1px solid #2a3343;
+      transition: 0.2s;
+    }
+
+    .resource-link i {
+      width: 1.6rem;
+      color: var(--accent);
+    }
+
+    .resource-link:hover {
+      color: white;
+      padding-left: 0.5rem;
+    }
+
+    /* ---------- VIDEO / SHEET / READ CARDS ---------- */
+    .video-grid, .sheets-grid, .read-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .video-card {
+      background: var(--surface);
+      border-radius: 24px;
+      padding: 1.2rem;
+      transition: var(--transition);
+      border: 1px solid #2f3b4e;
+    }
+
+    .video-card:hover {
+      transform: scale(1.02);
+      border-color: var(--accent);
+      box-shadow: 0 10px 20px rgba(0, 224, 255, 0.15);
+    }
+
+    .video-embed {
+      background: #0f172a;
+      border-radius: 16px;
+      height: 150px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      font-size: 1rem;
+      gap: 0.5rem;
+    }
+
+    .video-embed i {
+      transition: transform 0.2s;
+    }
+    .video-card:hover .video-embed i {
+      transform: scale(1.1);
+    }
+
+    /* ---------- SCHEDULE ---------- */
+    .schedule-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .schedule-item {
+      background: var(--surface);
+      border-radius: 24px;
+      padding: 1.5rem;
+      border-left: 4px solid var(--accent);
+    }
+
+    /* ---------- CONSULTATION ---------- */
+    .consult-block {
+      background: linear-gradient(145deg, #101b26, #0b0e14);
+      border-radius: 40px;
+      padding: 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid var(--accent);
+      box-shadow: 0 0 30px var(--accent-glow);
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+
+    .consult-block span {
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+
+    /* ---------- BACK TO TOP ---------- */
+    #backToTop {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--accent);
+      color: #0b0e14;
+      width: 50px;
+      height: 50px;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      cursor: pointer;
+      opacity: 0;
+      transition: var(--transition);
+      border: none;
+      pointer-events: none;
+      z-index: 99;
+      box-shadow: 0 0 15px var(--accent);
+    }
+
+    #backToTop.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* ---------- SCROLL REVEAL ---------- */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s ease;
+    }
+
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ---------- SEARCH / FILTER ---------- */
+    .search-wrapper {
+      margin-bottom: 2rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    #machineSearch {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid #2f3b4e;
+      border-radius: 40px;
+      padding: 0.8rem 1.5rem;
+      color: white;
+      font-size: 1rem;
+    }
+
+    #machineSearch:focus {
+      border-color: var(--accent);
+      outline: none;
+      box-shadow: 0 0 8px var(--accent-glow);
+    }
+
+    .module-count {
+      background: var(--accent);
+      padding: 0.5rem 1.5rem;
+      border-radius: 40px;
+      color: #0b0e14;
+      font-weight: bold;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .resource-badge {
+      margin-left: 1rem;
+      font-size: 0.9rem;
+      background: var(--surface-light);
+      padding: 0.2rem 1rem;
+      border-radius: 30px;
+      color: var(--accent);
+    }
+
+    /* ---------- FOOTER ---------- */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-secondary);
+      border-top: 1px solid #1e293b;
+    }
+
+    /* ---------- RESPONSIVE ---------- */
+    @media (max-width: 800px) {
+      .schedule-grid {
+        grid-template-columns: 1fr;
+      }
+      .consult-block {
+        flex-direction: column;
+        text-align: center;
+      }
+      .nav-links {
+        display: none;
+      }
+      .hero-cta {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- PRELOADER -->
+  <div id="preloader"><div class="loader"></div></div>
+
+  <!-- PROGRESS BAR -->
+  <div id="progress-bar"></div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <span class="logo"><i class="fas fa-bolt" style="color:var(--accent);"></i> EEE221 </span>
+    <div class="nav-links">
+      <a href="#home">Home</a>
+      <a href="#about">About</a>
+      <a href="#machines">Machines</a>
+      <!-- <a href="#videos">Videos</a> -->
+      <a href="#sheets">Sheets</a>
+      <a href="#schedule">Schedule</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </nav>
+
+  <!-- BACK TO TOP -->
+  <div id="backToTop"><i class="fas fa-arrow-up"></i></div>
+
+  <main>
+    <!-- 1️⃣ HERO (LOGIN REMOVED) -->
+    <section id="home" class="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-content">
+        <h1>EEE221 <span style="color:var(--accent);">Energy Conversion I</span></h1>
+        <div class="sub">Resource Portal</div>
+        <p class="intro-text">Deepen your understanding of electrical machines with curated videos, lecture sheets, reading materials, and direct consultation.</p>
+        <div class="hero-cta">
+          <a href="#machines" class="btn btn-primary"><i class="fas fa-book-open"></i> Access Resources</a>
+          <a href="#consult" class="btn btn-outline"><i class="fas fa-calendar-check"></i> Book Consultation</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2️⃣ ABOUT ME (UPDATED WITH REAL NAME & IMAGE READY) -->
+    <section id="about" class="section reveal">
+      <h2>About me</h2>
+      <div class="about-grid">
+        <!-- Replace src with your actual image path -->
+        <!-- <div class="profile-img">
+          <img src="DP_#.jpg" alt="MD Shazzad Ahammed Shuvo">
+        </div> -->
+        <div class="about-text">
+          <h3>
+            MD Shazzad Ahammed Shuvo |
+            <!-- <span>| Student Tutor</span> -->
+            <a href="https://shazzad-ahmmed-shuvo.vercel.app/" target="_blank" class="btn btn-outline"><i class="fas fa-circle-user"></i> Student Tutor</a>
+          </h3>
+          <p>Third Year Undergrade student in Electrical and Electronic Engineering.</p>
+          <div class="specialization">
+            <i class="fas fa-microchip"></i>
+            <strong>Specialization:</strong> Electric machines, Numerical Techniques, Electronic System Design.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3️⃣ MACHINE MODULES -->
+    <section id="machines" class="section reveal">
+      <h2>⚙️ Machine modules <span class="resource-badge" id="resourceCount">0 resources</span></h2>
+
+      <div class="search-wrapper">
+        <input type="text" id="machineSearch" placeholder="🔍 Filter by machine name (e.g., transformer, motor...)">
+        <span class="module-count"><i class="fas fa-cubes"></i> 6 modules</span>
+      </div>
+
+      <div class="machines-grid" id="machineGrid">
+        <div class="machine-card">
+          <div class="machine-header"><i class="fas fa-fan"></i><h3>AC Fundamentals</h3></div>
+          <div class="machine-expand">
+            <div class="expand-content">
+              <a href="https://youtube.com/playlist?list=PLuAoCdNhW5A1VjUbKUym0phqWPxSBE2xB&si=cVcru4ycrJUKvIvE" class="resource-link"><i class="fab fa-youtube"></i> EEE203 - Basic Concepts</a>
+              <a href="https://drive.google.com/file/d/1NtB7upjCBpxQcp4aT2wLUMSrwb4aTFo4/view?usp=sharing" class="resource-link"><i class="fas fa-file-pdf"></i> Book</a>
+            </div>
+          </div>
+        </div>
+        <!-- Transformer -->
+        <div class="machine-card">
+          <div class="machine-header"><i class="fas fa-bolt"></i><h3>Transformer</h3></div>
+          <div class="machine-expand">
+            <div class="expand-content">
+              <a href="#" class="resource-link"><i class="fab fa-youtube"></i> Tutorial video – 01: Basics Of transformer</a>
+              <a href="#" class="resource-link"><i class="fab fa-youtube"></i> Tutorial video – 02: Performance analysis of transformer</a>
+              <a href="#" class="resource-link"><i class="fab fa-youtube"></i> Tutorial video – 03: Auto-transformer & Three Phase transformer</a>
+              <a href="https://drive.google.com/drive/folders/13DCzMLtyR3LMB7cRuYmRqcoChOtQ1wex?usp=sharing" class="resource-link"><i class="fas fa-file-pdf"></i> Lecture sheet </a>
+              <!-- <a href="#" class="resource-link"><i class="fas fa-book"></i> Extra Materials</a> -->
+              <!-- <a href="#" class="resource-link"><i class="fas fa-pencil-alt"></i> Practice problems (pdf)</a> -->
+            </div>
+          </div>
+        </div>
+        <!-- Induction Motor -->
+        <div class="machine-card">
+          <div class="machine-header"><i class="fas fa-cogs"></i><h3>Induction Motor</h3></div>
+          <div class="machine-expand">
+            <div class="expand-content">
+              <a href="#" class="resource-link"><i class="fab fa-youtube"></i> Tutorial video – 01: Basics Of AC Machines</a>
+              <a href="#" class="resource-link"><i class="fab fa-youtube"></i> Tutorial video – 02: Basics Of Induction Motor</a>
+              <a href="#" class="resource-link"><i class="fab fa-youtube"></i> Tutorial video – 03: Practice Problems</a>
+              <a href="https://drive.google.com/drive/folders/1LprhkEsOWxGqkVCsS3L6IitQavxJSefN?usp=drive_link" class="resource-link"><i class="fas fa-file-pdf"></i> Lecture sheet </a>
+              <!-- <a href="#" class="resource-link"><i class="fas fa-book"></i> Notes: equivalent circuit</a> -->
+            </div>
+          </div>
+        </div>
+        <!-- Synchronous Generator -->
+        <div class="machine-card">
+          <div class="machine-header"><i class="fas fa-charging-station"></i><h3>Synchronous Generator</h3></div>
+          <div class="machine-expand">
+            <div class="expand-content">
+              <a href="https://youtube.com/playlist?list=PLuAoCdNhW5A2gFqLW9a1inn5imtGYITt3&si=oQCQvQIF-mqHn1Uz" class="resource-link"><i class="fab fa-youtube"></i> Tutorial video </a>
+              <a href="https://drive.google.com/drive/folders/14QKPFQ51cidesQapNh4TclnSRQAPNhYU?usp=drive_link" class="resource-link"><i class="fas fa-file-pdf"></i> Lecture sheet</a>
+              <!-- <a href="#" class="resource-link"><i class="fas fa-scroll"></i> Formula sheet</a> -->
+            </div>
+          </div>
+        </div>
+        <!-- Synchronous Motor -->
+        <div class="machine-card">
+          <div class="machine-header"><i class="fas fa-microchip"></i><h3>Synchronous Motor</h3></div>
+          <div class="machine-expand">
+            <div class="expand-content">
+              <a href="https://youtu.be/sGYhzY1fxSE?si=sPzbvSeOvSxNGxlB" class="resource-link"><i class="fab fa-youtube"></i> Tutorial video</a>
+              <a href="https://drive.google.com/drive/folders/1PX1vvKkEEaP-F2z8my_dvmApNIq1yAqm?usp=drive_link" class="resource-link"><i class="fas fa-file-pdf"></i> Lecture sheet</a>
+            </div>
+          </div>
+        </div>
+        <!-- DC Generator -->
+        <div class="machine-card">
+          <div class="machine-header"><i class="fas fa-car-battery"></i><h3>DC Machine</h3></div>
+          <div class="machine-expand">
+            <div class="expand-content">
+              <a href="#" class="resource-link"><i class="fab fa-youtube"></i> Tutorial video – 01: Basics Of DC Machines</a>
+              <a href="#" class="resource-link"><i class="fab fa-youtube"></i> Tutorial video – 02:  DC Generator & Motor</a>
+              <a href="https://drive.google.com/drive/folders/1y3ubatLSMflVx4AsU_ZxVIRH9A7hnyaW?usp=drive_link" class="resource-link"><i class="fas fa-file-pdf"></i> Lecture sheet</a>
+            </div>
+          </div>
+        </div>
+        <!-- DC Motor -->
+
+      </div>
+      <p style="text-align:right; color:var(--text-secondary); margin-top:1rem;"><i class="fas fa-mouse-pointer"></i> Click any card to expand resources</p>
+    </section>
+
+    <!-- 4️⃣ VIDEOS -->
+    <!-- <section id="videos" class="section reveal">
+      <h2><i class="fab fa-youtube" style="color:var(--accent);"></i> Tutorial videos</h2>
+      <div class="video-grid">
+        <div class="video-card"><div class="video-embed"><i class="fab fa-youtube fa-2x"></i> Transformer basics</div><p><i class="fas fa-bolt"></i> Transformer · magnetic circuit</p></div>
+        <div class="video-card"><div class="video-embed"><i class="fab fa-youtube fa-2x"></i> Induction motor slip</div><p><i class="fas fa-cogs"></i> Induction motor</p></div>
+        <div class="video-card"><div class="video-embed"><i class="fab fa-youtube fa-2x"></i> Synchronous generator</div><p><i class="fas fa-charging-station"></i> Sync generator</p></div>
+        <div class="video-card"><div class="video-embed"><i class="fab fa-youtube fa-2x"></i> DC motor speed control</div><p><i class="fas fa-fan"></i> DC machines</p></div>
+      </div>
+    </section> -->
+
+    <!-- 5️⃣ SHEETS -->
+    <section id="sheets" class="section reveal">
+      <h2><i class="fas fa-file-alt"></i> Lecture sheets</h2>
+      <div class="sheets-grid">
+        <div class="video-card"><i class="fas fa-download" style="color:var(--accent);"></i> AC Fundamentals <div style="margin-top:1rem;"><a href="https://drive.google.com/file/d/1NtB7upjCBpxQcp4aT2wLUMSrwb4aTFo4/view" class="btn-outline" style="padding:0.3rem 1.5rem; border:1px solid var(--accent); border-radius:30px;">PDF</a></div></div>
+        <div class="video-card"><i class="fas fa-download" style="color:var(--accent);"></i> Transformer<div style="margin-top:1rem;"><a href="https://drive.google.com/drive/folders/13DCzMLtyR3LMB7cRuYmRqcoChOtQ1wex?usp=sharing" class="btn-outline" style="padding:0.3rem 1.5rem; border:1px solid var(--accent); border-radius:30px;">PDF</a></div></div>
+        <div class="video-card"><i class="fas fa-download" style="color:var(--accent);"></i> Induction Motor <div style="margin-top:1rem;"><a href="https://drive.google.com/drive/folders/1LprhkEsOWxGqkVCsS3L6IitQavxJSefN?usp=drive_link" class="btn-outline" style="padding:0.3rem 1.5rem; border:1px solid var(--accent); border-radius:30px;">PDF</a></div></div>
+        <div class="video-card"><i class="fas fa-download" style="color:var(--accent);"></i> Synchronous Generator <div style="margin-top:1rem;"><a href="https://drive.google.com/drive/folders/14QKPFQ51cidesQapNh4TclnSRQAPNhYU?usp=drive_link" class="btn-outline" style="padding:0.3rem 1.5rem; border:1px solid var(--accent); border-radius:30px;">PDF</a></div></div>
+        <div class="video-card"><i class="fas fa-download" style="color:var(--accent);"></i> Synchronous Motor <div style="margin-top:1rem;"><a href="https://drive.google.com/drive/folders/1PX1vvKkEEaP-F2z8my_dvmApNIq1yAqm?usp=drive_link" class="btn-outline" style="padding:0.3rem 1.5rem; border:1px solid var(--accent); border-radius:30px;">PDF</a></div></div>
+        <div class="video-card"><i class="fas fa-download" style="color:var(--accent);"></i> DC Machines <div style="margin-top:1rem;"><a href="https://drive.google.com/drive/folders/1y3ubatLSMflVx4AsU_ZxVIRH9A7hnyaW?usp=drive_link" class="btn-outline" style="padding:0.3rem 1.5rem; border:1px solid var(--accent); border-radius:30px;">PDF</a></div></div>
+
+      </div>
+    </section>
+
+    <!-- 6️⃣ READINGS -->
+    <section id="readings" class="section reveal">
+      <h2><i class="fas fa-book-open"></i> Reading materials </h2>
+      <div class="read-grid">
+        <div class="video-card"><i class="fas fa-book" style="color:var(--accent);"></i> Chapman, Electric Machinery Fundamentals (5th ed)</div>
+        <div class="video-card"><i class="fas fa-square-root-variable" style="color:var(--accent);"></i> Lecture sheet</div>
+        <!-- <div class="video-card"><i class="fas fa-square-root-variable" style="color:var(--accent);"></i> Per-unit system notes</div>
+        <div class="video-card"><i class="fas fa-scroll" style="color:var(--accent);"></i> Induction motor equivalent circuit derivation</div> -->
+      </div>
+    </section>
+
+    <!-- 7️⃣ SCHEDULE -->
+    <section id="schedule" class="section reveal">
+      <h2><i class="far fa-clock"></i> Weekly schedule</h2>
+      <div class="schedule-grid">
+        <div class="schedule-item"><strong><i class="fas fa-chalkboard-teacher"></i> Tutorial</strong><br>Friday 10:00 am –12:00 pm (During Ramadan) <br><br> Thursday 08:00 pm – 10:00 pm ( Official schedule)</div>
+        <div class="schedule-item"><strong><i class="fas fa-user-graduate"></i> Offline Consultation</strong><br> ** Ramadan Schedule <br>Sunday 11:45 am – 12:45 pm  <br> Wednesday 08.00 am - 10.20 am <br><br> ** Official Schedule <br>Sunday 12:30 pm – 01:30 pm  <br> Wednesday 08.00 am - 11.00 am <br>(9th Floor, AKM Tower) </div>
+        <div class="schedule-item"><strong><i class="fas fa-globe"></i> Online consultation</strong><br>** Official Schedule <br>Thursday 10:00 pm–11:00 pm (Google Meet) <br> <br> ** Ramadan Schedule<br> Friday 12:00 pm–01:00 pm (Google Meet)</div>
+      </div>
+    </section>
+
+    <!-- 8️⃣ CONSULTATION -->
+    <section id="consult" class="section reveal">
+      <div class="consult-block">
+        <span><i class="fas fa-calendar-alt" style="color:var(--accent);"></i> Book consultation</span>
+        <a href="https://calendly.com/shazzad-ahammed-shuvo/30min" target="_blank" class="btn btn-primary" style="font-size:1.2rem;"><i class="fas fa-calendar-plus"></i> Choose your Slot</a>
+      </div>
+    </section>
+
+    <!-- 9️⃣ CONTACT (UPDATED WITH YOUR NAME) -->
+    <section id="contact" class="section reveal">
+      <h2><i class="fas fa-envelope"></i> Contact</h2>
+      <div style="display: flex; gap: 3rem; flex-wrap: wrap; background:var(--surface); padding:2rem; border-radius: 40px;">
+        <div><i class="fas fa-envelope" style="color:var(--accent);"></i> shazzad.ahammed.shuvo@g.bracu.ac.bd</div>
+        <div><i class="fas fa-building"></i> 9th Floor, AKM Tower, Merul Badda, Dhaka.</div>
+        <div><i class="fas fa-globe"></i> https://shazzad-ahmmed-shuvo.vercel.app/</div>
+        <!-- <div><i class="fab fa-linkedin"></i> /in/shazzad-ahammed</div>
+        <div><i class="fas fa-phone-alt"></i> +1 (555) 221-EEE1</div> -->
+      </div>
+    </section>
+
+    <footer>
+      © 2026 | EEE221 – Energy Conversion I |  Resource Portal
+    </footer>
+  </main>
+
+  <script>
+    (function() {
+      // Preloader
+      window.addEventListener('load', () => {
+        const preloader = document.getElementById('preloader');
+        preloader.style.opacity = '0';
+        setTimeout(() => preloader.style.display = 'none', 600);
+      });
+
+      // Navbar shrink
+      const nav = document.getElementById('navbar');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) nav.classList.add('shrink');
+        else nav.classList.remove('shrink');
+      });
+
+      // Progress bar
+      const progressBar = document.getElementById('progress-bar');
+      window.addEventListener('scroll', () => {
+        const winScroll = document.documentElement.scrollTop;
+        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrolled = (winScroll / height) * 100;
+        progressBar.style.width = scrolled + '%';
+      });
+
+      // Back to top
+      const backBtn = document.getElementById('backToTop');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 600) backBtn.classList.add('visible');
+        else backBtn.classList.remove('visible');
+      });
+      backBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+      // Intersection Observer (reveal)
+      const reveals = document.querySelectorAll('.reveal');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) entry.target.classList.add('active');
+        });
+      }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+      reveals.forEach(r => observer.observe(r));
+
+      // Smooth scroll nav
+      document.querySelectorAll('.nav-links a, .btn[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+          const href = this.getAttribute('href');
+          if (href === '#') return;
+          const target = document.querySelector(href);
+          if (target) {
+            e.preventDefault();
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+      });
+
+      // Machine card toggle (prevent collapse when clicking links)
+      document.querySelectorAll('.machine-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+          if (e.target.closest('.resource-link')) return;
+          this.classList.toggle('active');
+        });
+      });
+
+      // Search filter
+      const searchInput = document.getElementById('machineSearch');
+      if (searchInput) {
+        searchInput.addEventListener('input', function() {
+          const filter = this.value.toLowerCase();
+          document.querySelectorAll('.machine-card').forEach(card => {
+            const title = card.querySelector('h3')?.innerText.toLowerCase() || '';
+            card.style.display = title.includes(filter) ? 'block' : 'none';
+          });
+        });
+      }
+
+      // Resource count
+      const totalResources = document.querySelectorAll('.resource-link').length;
+      const countBadge = document.getElementById('resourceCount');
+      if (countBadge) countBadge.innerText = `📄 ${totalResources} resources`;
+    })();
+  </script>
+</body>
+</html>
